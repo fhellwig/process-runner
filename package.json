@@ -1,0 +1,28 @@
+{
+  "name": "process-runner",
+  "version": "1.0.0",
+  "description": "Handles the complexities associated with using the node child process fork function.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fhellwig/process-runner.git"
+  },
+  "keywords": [
+    "node",
+    "child",
+    "process",
+    "fork"
+  ],
+  "author": "Frank Hellwig <frank@hellwig.org>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fhellwig/process-runner/issues"
+  },
+  "homepage": "https://github.com/fhellwig/process-runner#readme",
+  "dependencies": {
+    "chokidar": "^3.0.2"
+  }
+}
