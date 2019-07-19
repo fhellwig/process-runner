@@ -37,7 +37,7 @@ In the case of being resolved by a message, the message is the value of the reso
 
 ### `nodeProcess.stop()`
 
-Sends a `'stop'` message to the child process and waits for the child process to exit. The promise is resolved when the process exits with an exit code of zero.
+Sends a `SIGINT` signal to the child process and waits for the child process to exit. The promise is resolved when the process exits with an exit code of zero.
 
 ### `nodeProcess.restart()`
 
