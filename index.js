@@ -22,12 +22,12 @@ class NodeProcess {
   stop() {
     return new Promise((resolve, reject) => {
       if (this._child === null) {
-        this._code === 0 ? resolve(0) : reject(this._error(this._code));
+        this._code ? reject(this._error(this._code)) : resolve(0);
       } else {
         this._child.removeAllListeners();
         this._child.once('exit', code => {
           this._child = null;
-          code === 0 ? resolve(0) : reject(this._error(code));
+          code ? reject(this._error(code)) : resolve(0);
         });
         this._child.kill('SIGINT');
       }
@@ -76,7 +76,7 @@ class NodeProcess {
         this._child.removeAllListeners();
         this._child = null;
         this._code = code;
-        code === 0 ? resolve(0) : reject(this._error(code));
+        code ? reject(this._error(code)) : resolve(0);
       });
       this._child.once('message', msg => {
         this._child.removeAllListeners();
