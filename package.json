@@ -1,6 +1,6 @@
 {
   "name": "process-runner",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Handles the complexities associated with using the node child process fork function.",
   "main": "index.js",
   "scripts": {

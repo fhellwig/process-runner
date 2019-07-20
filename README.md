@@ -49,7 +49,7 @@ Returns a promise that is resolved when
 
 In the case of being resolved by a message, the message is the value of the resolved promise. This feature exists so that a process can perform initialization activity before releasing the parent to move on to the next task.
 
-The default options passed to the [child_process.fork()](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options) are as follows:
+The default options passed to [child_process.fork()](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options) are as follows:
 
 ```javascript
 {
