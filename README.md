@@ -61,15 +61,15 @@ The default options passed to [child_process.fork()](https://nodejs.org/api/chil
 This ensures that the processes current working directory is that of the module specified in the constructor and that it receives the complete environment of the parent process. The `FORCE_COLOR` option makes utilities such as
 [chalk](https://www.npmjs.com/package/chalk) work as expected.
 
-### `nodeProcess.stop()`
+### `process.stop()`
 
 Sends a `SIGINT` signal to the child process and waits for the child process to exit. The promise is resolved when the process exits (or has already terminated) with a non-error exit code.
 
-### `nodeProcess.restart()`
+### `process.restart()`
 
 Stops the process by calling (and waiting on) the `stop()` method and then calls the `start()` method. The return value is the promise returned by the `start()` method.
 
-### `nodeProcess.watch(paths, [,options] [,onChange])`
+### `process.watch(paths, [,options] [,onChange])`
 
 Creates a watcher using [chokidar](https://www.npmjs.com/package/chokidar) and restarts the process on changes by handling the `change` event. The default options when creating the watcher are:
 
