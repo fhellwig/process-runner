@@ -14,8 +14,25 @@ const { NodeProcess } = require('process-runner');
 
 ## Important
 
-1. Your process must send a message using `process.send()` so that the promise returned by the `start()` method is resolved.
-2. Your process must handle the `SIGTERM` event by performing any required cleanup activity followed by a `process.exit(0)`;
+Cross-platform signal delivery is sketchy at best and some modules hijack signal handlers making it impossible to reliable handle process termination signals. Accordingly, this package uses the child process IPC facility for process control. Please ensure you implement the following conventions:
+
+1. Your process must send a `'ready'` message using `process.send()` so that the promise returned by the `start()` method is resolved.
+2. Your process must handle the `'stop'` messageevent by performing any required cleanup activity followed by a `process.exit(0)`;
+
+```javascript
+function startServer() {
+  const server = createServer(); // hypothetical function
+  process.send('ready');
+  process.on('message', async msg => {
+    if (msg === 'stop') {
+      await server.stop();
+      process.exit(0);
+    }
+  });
+}
+```
+
+If your process exits with a zero exit code instead of sending the `'ready'` message, then the promise returned by the `start()` method will be resolved and the `stop()` method will resolve immediately since the process has already been stopped.
 
 ## Motivation
 
@@ -61,7 +78,7 @@ Starts the module specified by the `modulePath` with the specified `args`.
 
 Returns a promise that is resolved when
 
-- (a) the process sends a message using `process.send()` or
+- (a) the process sends a `'ready'` message using `process.send()` or
 - (b) the process exits with an exit code of zero.
 
 In the case of being resolved by a message, the message is the value of the resolved promise. This feature exists so that a process can perform initialization activity before releasing the parent to move on to the next task.
@@ -80,7 +97,7 @@ This ensures that the processes current working directory is that of the module 
 
 ### `process.stop()`
 
-Sends a `SIGTERM` signal to the child process and waits for the child process to exit. The promise is resolved when the process exits (or has already terminated) with a non-error exit code.
+Sends a `'stop'` message to the child process and waits for the child process to exit. The promise is resolved when the process exits (or has already terminated) with a zero exit code.
 
 ### `process.restart()`
 
