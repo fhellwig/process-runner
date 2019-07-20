@@ -96,7 +96,7 @@ class NodeProcess {
   }
 
   _error(code) {
-    return new Error(`${this._module}: ${code}`);
+    return new Error(`Non-zero exit code from ${this._module}: ${code}`);
   }
 }
 
