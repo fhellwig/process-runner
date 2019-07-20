@@ -12,6 +12,11 @@ npm install --save process-runner
 const { NodeProcess } = require('process-runner');
 ```
 
+## Important
+
+1. Your process must send a message using `process.send()` so that the promise returned by the `start()` method is resolved.
+2. Your process must handle the `SIGTERM` event by performing any required cleanup activity followed by a `process.exit(0)`;
+
 ## Motivation
 
 I created this package because, during development, I often run multiple processes that watch for changes and yet need to be started and managed sequentially. For example, you want to perform a build and then watch for changes but you only want to start the server after the build is complete yet in parallel with watching for application changes.
@@ -22,11 +27,11 @@ The key concept of this package is that starting a long-running process often in
 
 For convenience, watching for changes and restarting the process is included in this package. I found this more convenient that dealing with command line tools such as nodemon. Although these can be run as modules, it is not their primary operating mode. The `watch()` method in this package provides an alternative.
 
-Various edge cases have been taken into account including buggy third-party packages that hijack SIGINT event handling or situations in which processes exit before having a chance for their own SIGINT handlers to run. This package works equally well on Linux, macOS, and Windows.
+This package works on Linux, macOS, and Windows.
 
 ## API
 
-The `NodeProcess` class has a constructor and four async methods, each returning a promise.
+The `NodeProcess` class has a constructor and five async methods (one of which is static), each returning a promise.
 
 ### `new NodeProcess(modulePath, args)`
 
@@ -35,7 +40,19 @@ Creates a new `NodeProcess` instance but does not perform any startup actions.
 Example:
 
 ```javascript
-const process = new NodeProcess('server.js', [8080]);
+async function startup() {
+  const process = new NodeProcess('server.js', [8080]);
+
+  // Start the process (and wait for a message).
+  await process.start();
+
+  // The waitForInterrupt handles SIGINT using readline
+  // so that it is not propogated to any child process.
+  await NodeProcess.waitForInterrupt();
+  console.log('Stopping child process...');
+  await process.stop();
+  console.log('Child process stopped.');
+}
 ```
 
 ### `process.start()`
@@ -63,7 +80,7 @@ This ensures that the processes current working directory is that of the module 
 
 ### `process.stop()`
 
-Sends a `SIGINT` signal to the child process and waits for the child process to exit. The promise is resolved when the process exits (or has already terminated) with a non-error exit code.
+Sends a `SIGTERM` signal to the child process and waits for the child process to exit. The promise is resolved when the process exits (or has already terminated) with a non-error exit code.
 
 ### `process.restart()`
 
@@ -84,6 +101,10 @@ Creates a watcher using [chokidar](https://www.npmjs.com/package/chokidar) and r
 ```
 
 If the optional `onChange` callback function is specified, it is called as `onChange(filename)` when a file is changed. The return value of the `watch()` method is the promise returned by `start()`.
+
+## `NodeProcess.waitForInterrupt()`
+
+This static method creates a [readline](https://nodejs.org/api/readline.html#readline_readline_createinterface_options) interface and waits for a `SIGINT` signal. The returned promise is resolved once the signal is received. This is an alternative to using process-level signal handler as it prevents the `SIGINT` signal from being propogated to any child process thereby allowing for a graceful shutdown of each child process. Please see the example above for usage.
 
 # License
 

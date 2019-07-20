@@ -1,6 +1,10 @@
 const proc = require('child_process');
 const path = require('path');
+const readline = require('readline');
 const chokidar = require('chokidar');
+
+const SIGINT = 'SIGINT';
+const SIGTERM = 'SIGTERM';
 
 class NodeProcess {
   constructor(modulePath, args) {
@@ -29,7 +33,7 @@ class NodeProcess {
           this._child = null;
           code ? reject(this._error(code)) : resolve(0);
         });
-        this._child.kill('SIGINT');
+        this._child.kill(SIGTERM);
       }
     });
   }
@@ -62,6 +66,19 @@ class NodeProcess {
         this.restart();
       });
       return retval;
+    });
+  }
+
+  static waitForInterrupt() {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+      terminal: true
+    });
+    return new Promise((resolve, reject) => {
+      rl.once(SIGINT, () => {
+        resolve(SIGINT);
+      });
     });
   }
 
