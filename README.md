@@ -14,7 +14,7 @@ const { NodeProcess } = require('process-runner');
 
 ## Important
 
-Cross-platform signal delivery is sketchy at best and some modules hijack signal handlers making it impossible to reliable handle process termination signals. Accordingly, this package uses the child process IPC facility for process control. Please ensure you implement the following conventions:
+Cross-platform signal delivery is sketchy at best and some modules hijack signal handlers making it impossible to reliably handle process termination signals. Accordingly, this package uses the child process IPC facility for process control. Please ensure you implement the following conventions:
 
 1. Your process must send a `'ready'` message using `process.send()` so that the promise returned by the `start()` method is resolved.
 2. Your process must handle the `'stop'` message event by performing any required cleanup activity followed by a `process.exit(0)`;
