@@ -17,7 +17,7 @@ const { NodeProcess } = require('process-runner');
 Cross-platform signal delivery is sketchy at best and some modules hijack signal handlers making it impossible to reliable handle process termination signals. Accordingly, this package uses the child process IPC facility for process control. Please ensure you implement the following conventions:
 
 1. Your process must send a `'ready'` message using `process.send()` so that the promise returned by the `start()` method is resolved.
-2. Your process must handle the `'stop'` messageevent by performing any required cleanup activity followed by a `process.exit(0)`;
+2. Your process must handle the `'stop'` message event by performing any required cleanup activity followed by a `process.exit(0)`;
 
 ```javascript
 function startServer() {
@@ -119,7 +119,7 @@ Creates a watcher using [chokidar](https://www.npmjs.com/package/chokidar) and r
 
 If the optional `onChange` callback function is specified, it is called as `onChange(filename)` when a file is changed. The return value of the `watch()` method is the promise returned by `start()`.
 
-## `NodeProcess.waitForInterrupt()`
+### `NodeProcess.waitForInterrupt()`
 
 This static method creates a [readline](https://nodejs.org/api/readline.html#readline_readline_createinterface_options) interface and waits for a `SIGINT` signal. The returned promise is resolved once the signal is received. This is an alternative to using process-level signal handler as it prevents the `SIGINT` signal from being propogated to any child process thereby allowing for a graceful shutdown of each child process. Please see the example above for usage.
 
